@@ -1,8 +1,8 @@
 <idea-plugin version="2">
-  <id>com.yourcompany.unique.plugin.id</id>
-  <name>Plugin display name here</name>
-  <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <id>de.suljee.dw.whenthendowhen</id>
+  <name>"when-then" to "do-when"</name>
+  <version>0.0.1</version>
+  <vendor email="dw@suljee.de" url="http://www.suljee.de/~dw">suljee.de/~dw</vendor>
 
   <description><![CDATA[
       Enter short description for your plugin here.<br>
@@ -37,6 +37,10 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
+      <intentionAction>
+          <className>de.suljee.dw.whenthendowhen.WhenThenToDoWhenStubbingIntention</className>
+          <bundleName>de.suljee.dw.whenthendowhen.whenthendowhen</bundleName>
+          <categoryKey>intention.category.junit</categoryKey>
+      </intentionAction>
   </extensions>
 </idea-plugin>

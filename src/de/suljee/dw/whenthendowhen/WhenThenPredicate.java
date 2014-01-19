@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+package de.suljee.dw.whenthendowhen;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiReferenceExpression;

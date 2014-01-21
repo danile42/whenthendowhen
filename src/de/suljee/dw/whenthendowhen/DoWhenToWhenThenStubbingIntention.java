@@ -33,26 +33,26 @@ import static de.suljee.dw.whenthendowhen.PsiUtils.joinExpressionTexts;
 /**
  * Created by daniel on 18.01.14.
  */
-public class WhenThenToDoWhenStubbingIntention extends Intention {
-    public static final WhenThenPredicate PREDICATE = new WhenThenPredicate();
+public class DoWhenToWhenThenStubbingIntention extends Intention {
+    public static final DoWhenPredicate PREDICATE = new DoWhenPredicate();
 
     @Override
     protected void processIntention(@NotNull PsiElement element) {
         String thenMethodName = PREDICATE.thenCall.getMethodExpression().getReferenceName();
-        String doMethodSuffix = thenMethodName.substring(4);
+        String doMethodSuffix = thenMethodName.substring(2);
 
-        StringBuilder expr = new StringBuilder("do");
-        expr.append(doMethodSuffix).append("(");
-        expr.append(joinExpressionTexts(PREDICATE.thenCall.getArgumentList().getExpressions(), ","));
-        expr.append(").when(");
+        StringBuilder expr = new StringBuilder("when(");
         expr.append(PREDICATE.mockObject.getText());
-        expr.append(").");
-        expr.append(PREDICATE.mockedMethod);
+        expr.append(".");
+        expr.append(PREDICATE.mockedMethodCall.getMethodExpression().getReferenceName());
         expr.append("(");
         expr.append(joinExpressionTexts(PREDICATE.mockedMethodArguments, ","));
+        expr.append(")).then");
+        expr.append(doMethodSuffix).append("(");
+        expr.append(joinExpressionTexts(PREDICATE.thenCall.getArgumentList().getExpressions(), ","));
         expr.append(")");
 
-        replaceExpression(expr.toString(), PREDICATE.thenCall);
+        replaceExpression(expr.toString(), PREDICATE.mockedMethodCall);
     }
 
     @NotNull
@@ -64,6 +64,6 @@ public class WhenThenToDoWhenStubbingIntention extends Intention {
     @NotNull
     @Override
     public String getText() {
-        return "Replace 'when-then' with 'do-when'";
+        return "Replace 'do-when' with 'when-then'";
     }
 }

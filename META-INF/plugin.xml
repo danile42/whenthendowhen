@@ -42,5 +42,10 @@
           <bundleName>de.suljee.dw.whenthendowhen.whenthendowhen</bundleName>
           <categoryKey>intention.category.junit</categoryKey>
       </intentionAction>
+      <intentionAction>
+          <className>de.suljee.dw.whenthendowhen.DoWhenToWhenThenStubbingIntention</className>
+          <bundleName>de.suljee.dw.whenthendowhen.whenthendowhen</bundleName>
+          <categoryKey>intention.category.junit</categoryKey>
+      </intentionAction>
   </extensions>
 </idea-plugin>

@@ -25,11 +25,11 @@ import com.siyeh.ipp.base.PsiElementPredicate;
 /**
  * Created by daniel on 18.01.14.
  */
-public class WhenThenPredicate implements PsiElementPredicate {
+public class DoWhenPredicate implements PsiElementPredicate {
     PsiMethodCallExpression thenCall = null;
     PsiMethodCallExpression whenCall = null;
+    PsiMethodCallExpression mockedMethodCall = null;
     PsiReferenceExpression mockObject = null;
-    String mockedMethod = null;
     PsiExpression[] mockedMethodArguments = null;
 
     @Override
@@ -41,34 +41,42 @@ public class WhenThenPredicate implements PsiElementPredicate {
         PsiMethodCallExpression methodCall = (PsiMethodCallExpression) element;
         PsiReferenceExpression methodReference = methodCall.getMethodExpression();
 
-        String methodName = methodReference.getReferenceName();
-        if (!(methodName.startsWith("then"))) {
+        if (methodReference.getReferenceName().equals("when")
+                || methodReference.getReferenceName().startsWith("do")) {
             return false;
         }
+        mockedMethodCall = methodCall;
+        mockedMethodArguments = methodCall.getArgumentList().getExpressions();
+
+
         if (!(methodReference.getFirstChild() instanceof PsiMethodCallExpression)) {
             return false;
         }
-        PsiMethodCallExpression subMethodCall = (PsiMethodCallExpression) methodReference.getFirstChild();
-        String subMethodName = subMethodCall.getMethodExpression().getReferenceName();
-        if (!(subMethodName.equals("when"))) {
+        PsiMethodCallExpression firstSubCall = (PsiMethodCallExpression) methodReference.getFirstChild();
+        PsiReferenceExpression subMethodReference = firstSubCall.getMethodExpression();
+        String firstSubMethodName = subMethodReference.getReferenceName();
+        if (!(firstSubMethodName.equals("when"))) {
             return false;
         }
+        whenCall = firstSubCall;
 
-        PsiExpression[] whenCallArguments = subMethodCall.getArgumentList().getExpressions();
+        if (!(subMethodReference.getFirstChild() instanceof PsiMethodCallExpression)) {
+            return false;
+        }
+        PsiMethodCallExpression subSubMethodCall = (PsiMethodCallExpression) subMethodReference.getFirstChild();
+        String subSubMethodName = subSubMethodCall.getMethodExpression().getReferenceName();
+        if (!(subSubMethodName.startsWith("do"))) {
+            return false;
+        }
+        thenCall = subSubMethodCall;
+
+        PsiExpression[] whenCallArguments = whenCall.getArgumentList().getExpressions();
         if (whenCallArguments.length > 0) {
             PsiElement whenCallArgument = whenCallArguments[0];
-            if (whenCallArgument instanceof PsiMethodCallExpression) {
-                PsiReferenceExpression whenCallArgumentExpression = ((PsiMethodCallExpression) whenCallArgument).getMethodExpression();
-                if (whenCallArgumentExpression.getFirstChild() instanceof PsiReferenceExpression) {
-                    mockObject = (PsiReferenceExpression) whenCallArgumentExpression.getFirstChild();
-                }
-                mockedMethod = whenCallArgumentExpression.getReferenceName();
-                mockedMethodArguments = ((PsiMethodCallExpression) whenCallArgument).getArgumentList().getExpressions();
+            if (whenCallArgument instanceof PsiReferenceExpression) {
+                mockObject = (PsiReferenceExpression) whenCallArgument;
             }
         }
-
-        thenCall = methodCall;
-        whenCall = subMethodCall;
 
         return true;
     }

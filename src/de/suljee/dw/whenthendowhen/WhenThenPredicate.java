@@ -23,7 +23,7 @@ import com.intellij.psi.PsiReferenceExpression;
 import com.siyeh.ipp.base.PsiElementPredicate;
 
 /**
- * Created by daniel on 18.01.14.
+ * Determines whether the current element is a "when-then" stubbing.
  */
 public class WhenThenPredicate implements PsiElementPredicate {
     PsiMethodCallExpression thenCall = null;

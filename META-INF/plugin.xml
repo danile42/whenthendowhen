@@ -1,22 +1,22 @@
 <idea-plugin version="2">
   <id>de.suljee.dw.whenthendowhen</id>
-  <name>"when-then" to "do-when"</name>
+  <name>when-then to do-when</name>
   <version>0.0.1</version>
   <vendor email="dw@suljee.de" url="http://www.suljee.de/~dw">suljee.de/~dw</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <small>most HTML tags may be used</small>
+      Intention to convert Mockito "when-then" stubbing to "do-when" stubbing and vice versa.
       ]]></description>
 
   <change-notes><![CDATA[
-      Add change notes here.<br>
-      <small>most HTML tags may be used</small>
+      <ul>
+      <li>2014-01-22: Basic support for converting "when-then" to "do-when" and vice versa.</li>
+      </ul>
       ]]>
   </change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="107.105"/>
+  <idea-version since-build="133.193"/>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->

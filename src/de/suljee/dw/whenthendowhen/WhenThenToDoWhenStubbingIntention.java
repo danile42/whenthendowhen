@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2014 JetBrains s.r.o.
+ * Copyright 2014 Daniel Warmuth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.Collection;
 import static de.suljee.dw.whenthendowhen.PsiUtils.joinExpressionTexts;
 
 /**
- * Created by daniel on 18.01.14.
+ * Converts "when-then" stubbing to "do-when".
  */
 public class WhenThenToDoWhenStubbingIntention extends Intention {
     public static final WhenThenPredicate PREDICATE = new WhenThenPredicate();

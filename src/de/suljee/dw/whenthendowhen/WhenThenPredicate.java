@@ -20,18 +20,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiReferenceExpression;
-import com.siyeh.ipp.base.PsiElementPredicate;
 
 /**
  * Determines whether the current element is a "when-then" stubbing.
  */
-public class WhenThenPredicate implements PsiElementPredicate {
-    PsiMethodCallExpression thenCall = null;
-    PsiMethodCallExpression whenCall = null;
-    PsiReferenceExpression mockObject = null;
-    String mockedMethod = null;
-    PsiExpression[] mockedMethodArguments = null;
-
+public class WhenThenPredicate extends AbstractStatefulStubbingIntentionPredicate {
     @Override
     public boolean satisfiedBy(PsiElement element) {
         if (!(element instanceof PsiMethodCallExpression)) {
@@ -59,11 +52,12 @@ public class WhenThenPredicate implements PsiElementPredicate {
             PsiElement whenCallArgument = whenCallArguments[0];
             if (whenCallArgument instanceof PsiMethodCallExpression) {
                 PsiReferenceExpression whenCallArgumentExpression = ((PsiMethodCallExpression) whenCallArgument).getMethodExpression();
-                if (whenCallArgumentExpression.getFirstChild() instanceof PsiReferenceExpression) {
-                    mockObject = (PsiReferenceExpression) whenCallArgumentExpression.getFirstChild();
+                if (!(whenCallArgumentExpression.getFirstChild() instanceof PsiReferenceExpression)) {
+                    return false;
                 }
-                mockedMethod = whenCallArgumentExpression.getReferenceName();
-                mockedMethodArguments = ((PsiMethodCallExpression) whenCallArgument).getArgumentList().getExpressions();
+                mockObject = (PsiReferenceExpression) whenCallArgumentExpression.getFirstChild();
+                stubbedMethodCall = (PsiMethodCallExpression) whenCallArgument;
+                stubbedMethodArguments = ((PsiMethodCallExpression) whenCallArgument).getArgumentList().getExpressions();
             }
         }
 

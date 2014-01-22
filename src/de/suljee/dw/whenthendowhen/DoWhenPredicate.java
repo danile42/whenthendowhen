@@ -20,18 +20,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiReferenceExpression;
-import com.siyeh.ipp.base.PsiElementPredicate;
 
 /**
  * Determines whether the current element is a "do-when" stubbing.
  */
-public class DoWhenPredicate implements PsiElementPredicate {
-    PsiMethodCallExpression thenCall = null;
-    PsiMethodCallExpression whenCall = null;
-    PsiMethodCallExpression mockedMethodCall = null;
-    PsiReferenceExpression mockObject = null;
-    PsiExpression[] mockedMethodArguments = null;
-
+public class DoWhenPredicate extends AbstractStatefulStubbingIntentionPredicate {
     @Override
     public boolean satisfiedBy(PsiElement element) {
         if (!(element instanceof PsiMethodCallExpression)) {
@@ -45,8 +38,8 @@ public class DoWhenPredicate implements PsiElementPredicate {
                 || methodReference.getReferenceName().startsWith("do")) {
             return false;
         }
-        mockedMethodCall = methodCall;
-        mockedMethodArguments = methodCall.getArgumentList().getExpressions();
+        stubbedMethodCall = methodCall;
+        stubbedMethodArguments = methodCall.getArgumentList().getExpressions();
 
 
         if (!(methodReference.getFirstChild() instanceof PsiMethodCallExpression)) {
@@ -73,9 +66,10 @@ public class DoWhenPredicate implements PsiElementPredicate {
         PsiExpression[] whenCallArguments = whenCall.getArgumentList().getExpressions();
         if (whenCallArguments.length > 0) {
             PsiElement whenCallArgument = whenCallArguments[0];
-            if (whenCallArgument instanceof PsiReferenceExpression) {
-                mockObject = (PsiReferenceExpression) whenCallArgument;
+            if (!(whenCallArgument instanceof PsiReferenceExpression)) {
+                return false;
             }
+            mockObject = (PsiReferenceExpression) whenCallArgument;
         }
 
         return true;

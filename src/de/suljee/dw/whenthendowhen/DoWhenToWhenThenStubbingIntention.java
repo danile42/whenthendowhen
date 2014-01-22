@@ -17,16 +17,9 @@
 package de.suljee.dw.whenthendowhen;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
 import com.siyeh.ipp.base.Intention;
 import com.siyeh.ipp.base.PsiElementPredicate;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 import static de.suljee.dw.whenthendowhen.PsiUtils.joinExpressionTexts;
 
@@ -34,30 +27,33 @@ import static de.suljee.dw.whenthendowhen.PsiUtils.joinExpressionTexts;
  * Converts "do-when" stubbing to "when-then".
  */
 public class DoWhenToWhenThenStubbingIntention extends Intention {
-    public static final DoWhenPredicate PREDICATE = new DoWhenPredicate();
+    private AbstractStatefulStubbingIntentionPredicate PREDICATE;
 
     @Override
     protected void processIntention(@NotNull PsiElement element) {
+        replaceExpression(whenClause() + stubbedMethodCall() + thenClause(), PREDICATE.stubbedMethodCall);
+    }
+
+    private String whenClause() {
+        return String.format("when(%s", PREDICATE.mockObject.getText());
+    }
+
+    private String stubbedMethodCall() {
+        return String.format(".%s(%s))", PREDICATE.stubbedMethodCall.getMethodExpression().getReferenceName(),
+                                        joinExpressionTexts(PREDICATE.stubbedMethodArguments, ","));
+    }
+
+    private String thenClause() {
         String thenMethodName = PREDICATE.thenCall.getMethodExpression().getReferenceName();
-        String doMethodSuffix = thenMethodName.substring(2);
-
-        StringBuilder expr = new StringBuilder("when(");
-        expr.append(PREDICATE.mockObject.getText());
-        expr.append(".");
-        expr.append(PREDICATE.mockedMethodCall.getMethodExpression().getReferenceName());
-        expr.append("(");
-        expr.append(joinExpressionTexts(PREDICATE.mockedMethodArguments, ","));
-        expr.append(")).then");
-        expr.append(doMethodSuffix).append("(");
-        expr.append(joinExpressionTexts(PREDICATE.thenCall.getArgumentList().getExpressions(), ","));
-        expr.append(")");
-
-        replaceExpression(expr.toString(), PREDICATE.mockedMethodCall);
+        String thenMethodSuffix = thenMethodName.substring(2);
+        return String.format(".then%s(%s)", thenMethodSuffix,
+                                            joinExpressionTexts(PREDICATE.thenCall.getArgumentList().getExpressions(), ","));
     }
 
     @NotNull
     @Override
     protected PsiElementPredicate getElementPredicate() {
+        PREDICATE = new DoWhenPredicate();
         return PREDICATE;
     }
 

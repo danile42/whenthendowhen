@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>de.suljee.dw.whenthendowhen</id>
   <name>when-then to do-when</name>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <vendor email="dw@suljee.de" url="http://www.suljee.de/~dw">suljee.de/~dw</vendor>
 
   <description><![CDATA[
@@ -11,6 +11,7 @@
   <change-notes><![CDATA[
       <ul>
       <li>2014-01-22: Basic support for converting "when-then" to "do-when" and vice versa.</li>
+      <li>2014-01-22: Fixed bug (old parse results used when applied to unfinished stubbing).</li>
       </ul>
       ]]>
   </change-notes>

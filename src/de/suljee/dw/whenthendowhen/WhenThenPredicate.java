@@ -27,43 +27,32 @@ import com.intellij.psi.PsiReferenceExpression;
 public class WhenThenPredicate extends AbstractStatefulStubbingIntentionPredicate {
     @Override
     public boolean satisfiedBy(PsiElement element) {
-        if (!(element instanceof PsiMethodCallExpression)) {
-            return false;
-        }
+        if ((element instanceof PsiMethodCallExpression)) {
+            PsiMethodCallExpression methodCall = (PsiMethodCallExpression) element;
+            PsiReferenceExpression methodReference = methodCall.getMethodExpression();
 
-        PsiMethodCallExpression methodCall = (PsiMethodCallExpression) element;
-        PsiReferenceExpression methodReference = methodCall.getMethodExpression();
-
-        String methodName = methodReference.getReferenceName();
-        if (!(methodName.startsWith("then"))) {
-            return false;
-        }
-        if (!(methodReference.getFirstChild() instanceof PsiMethodCallExpression)) {
-            return false;
-        }
-        PsiMethodCallExpression subMethodCall = (PsiMethodCallExpression) methodReference.getFirstChild();
-        String subMethodName = subMethodCall.getMethodExpression().getReferenceName();
-        if (!(subMethodName.equals("when"))) {
-            return false;
-        }
-
-        PsiExpression[] whenCallArguments = subMethodCall.getArgumentList().getExpressions();
-        if (whenCallArguments.length > 0) {
-            PsiElement whenCallArgument = whenCallArguments[0];
-            if (whenCallArgument instanceof PsiMethodCallExpression) {
-                PsiReferenceExpression whenCallArgumentExpression = ((PsiMethodCallExpression) whenCallArgument).getMethodExpression();
-                if (!(whenCallArgumentExpression.getFirstChild() instanceof PsiReferenceExpression)) {
-                    return false;
+            String methodName = methodReference.getReferenceName();
+            if ((methodName.startsWith("then"))) {
+                thenCall = methodCall;
+                if ((methodReference.getFirstChild() instanceof PsiMethodCallExpression)) {
+                    PsiMethodCallExpression subMethodCall = (PsiMethodCallExpression) methodReference.getFirstChild();
+                    String subMethodName = subMethodCall.getMethodExpression().getReferenceName();
+                    if ((subMethodName.equals("when"))) {
+                        whenCall = subMethodCall;
+                        PsiExpression[] whenCallArguments = whenCall.getArgumentList().getExpressions();
+                        if (whenCallArguments.length > 0 && whenCallArguments[0] instanceof PsiMethodCallExpression) {
+                            stubbedMethodCall = (PsiMethodCallExpression) whenCallArguments[0];
+                            stubbedMethodArguments = stubbedMethodCall.getArgumentList().getExpressions();
+                            PsiReferenceExpression stubbedMethodCallExpression = stubbedMethodCall.getMethodExpression();
+                            if (((stubbedMethodCallExpression.getFirstChild() instanceof PsiReferenceExpression))) {
+                                mockObject = (PsiReferenceExpression) stubbedMethodCallExpression.getFirstChild();
+                                return true;
+                            }
+                        }
+                    }
                 }
-                mockObject = (PsiReferenceExpression) whenCallArgumentExpression.getFirstChild();
-                stubbedMethodCall = (PsiMethodCallExpression) whenCallArgument;
-                stubbedMethodArguments = ((PsiMethodCallExpression) whenCallArgument).getArgumentList().getExpressions();
             }
         }
-
-        thenCall = methodCall;
-        whenCall = subMethodCall;
-
-        return true;
+        return false;
     }
 }

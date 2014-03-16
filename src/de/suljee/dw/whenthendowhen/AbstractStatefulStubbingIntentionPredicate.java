@@ -1,5 +1,6 @@
 package de.suljee.dw.whenthendowhen;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiReferenceExpression;
@@ -14,4 +15,41 @@ public abstract class AbstractStatefulStubbingIntentionPredicate implements PsiE
     PsiReferenceExpression mockObject = null;
     PsiMethodCallExpression stubbedMethodCall = null;
     PsiExpression[] stubbedMethodArguments = null;
+
+    abstract void analyze(PsiElement element);
+
+    @Override
+    public boolean satisfiedBy(PsiElement psiElement) {
+        resetState();
+        analyze(psiElement);
+        return isSuccessful();
+    }
+
+    void resetState() {
+        thenCall = null;
+        whenCall = null;
+        mockObject = null;
+        stubbedMethodCall = null;
+        stubbedMethodArguments = null;
+    }
+
+    protected final boolean isSuccessful() {
+        return thenCall != null
+                && whenCall != null
+                && mockObject != null
+                && stubbedMethodCall != null
+                && stubbedMethodArguments != null;
+    }
+
+    protected final boolean isMethodCall(PsiElement element) {
+        return (element instanceof PsiMethodCallExpression);
+    }
+
+    protected final String getMethodName(PsiMethodCallExpression methodCall) {
+        return methodCall.getMethodExpression().getReferenceName();
+    }
+
+    protected final PsiExpression[] getMethodArguments(PsiMethodCallExpression methodCall) {
+        return methodCall.getArgumentList().getExpressions();
+    }
 }

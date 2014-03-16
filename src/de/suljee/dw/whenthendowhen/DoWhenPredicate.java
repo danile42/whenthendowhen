@@ -26,52 +26,59 @@ import com.intellij.psi.PsiReferenceExpression;
  */
 public class DoWhenPredicate extends AbstractStatefulStubbingIntentionPredicate {
     @Override
-    public boolean satisfiedBy(PsiElement element) {
-        if (!(element instanceof PsiMethodCallExpression)) {
-            return false;
+    void analyze(PsiElement element) {
+        if (isMethodCall(element)) {
+            analyzeMethodCall((PsiMethodCallExpression) element);
         }
+    }
 
-        PsiMethodCallExpression methodCall = (PsiMethodCallExpression) element;
-        PsiReferenceExpression methodReference = methodCall.getMethodExpression();
+    private void analyzeMethodCall(PsiMethodCallExpression methodCall) {
+        String methodName = getMethodName(methodCall);
+        if (!methodName.equals("when") && !methodName.startsWith("do")) {
+            stubbedMethodCall = methodCall;
+            stubbedMethodArguments = getMethodArguments(methodCall);
 
-        if (methodReference.getReferenceName().equals("when")
-                || methodReference.getReferenceName().startsWith("do")) {
-            return false;
-        }
-        stubbedMethodCall = methodCall;
-        stubbedMethodArguments = methodCall.getArgumentList().getExpressions();
-
-
-        if (!(methodReference.getFirstChild() instanceof PsiMethodCallExpression)) {
-            return false;
-        }
-        PsiMethodCallExpression firstSubCall = (PsiMethodCallExpression) methodReference.getFirstChild();
-        PsiReferenceExpression subMethodReference = firstSubCall.getMethodExpression();
-        String firstSubMethodName = subMethodReference.getReferenceName();
-        if (!(firstSubMethodName.equals("when"))) {
-            return false;
-        }
-        whenCall = firstSubCall;
-
-        if (!(subMethodReference.getFirstChild() instanceof PsiMethodCallExpression)) {
-            return false;
-        }
-        PsiMethodCallExpression subSubMethodCall = (PsiMethodCallExpression) subMethodReference.getFirstChild();
-        String subSubMethodName = subSubMethodCall.getMethodExpression().getReferenceName();
-        if (!(subSubMethodName.startsWith("do"))) {
-            return false;
-        }
-        thenCall = subSubMethodCall;
-
-        PsiExpression[] whenCallArguments = whenCall.getArgumentList().getExpressions();
-        if (whenCallArguments.length > 0) {
-            PsiElement whenCallArgument = whenCallArguments[0];
-            if (!(whenCallArgument instanceof PsiReferenceExpression)) {
-                return false;
+            if (isMethodCall(methodCall.getMethodExpression().getFirstChild())) {
+                analyzeSubMethodCall((PsiMethodCallExpression) methodCall.getMethodExpression().getFirstChild());
             }
-            mockObject = (PsiReferenceExpression) whenCallArgument;
         }
+    }
 
-        return true;
+    private void analyzeSubMethodCall(PsiMethodCallExpression firstSubCall) {
+        String firstSubMethodName = getMethodName(firstSubCall);
+        if ((firstSubMethodName.equals("when"))) {
+            whenCall = firstSubCall;
+            mockObject = getMockObject(whenCall);
+
+            if (isMethodCall(firstSubCall.getMethodExpression().getFirstChild())) {
+                thenCall = getThenCall((PsiMethodCallExpression) firstSubCall.getMethodExpression().getFirstChild());
+            }
+        }
+    }
+
+    private PsiMethodCallExpression getThenCall(PsiMethodCallExpression subSubMethodCall) {
+        String subSubMethodName = getMethodName(subSubMethodCall);
+        if ((subSubMethodName.startsWith("do"))) {
+            return subSubMethodCall;
+        } else {
+            return null;
+        }
+    }
+
+    private PsiReferenceExpression getMockObject(PsiMethodCallExpression methodCall) {
+        PsiExpression[] whenCallArguments = getMethodArguments(methodCall);
+        if (containsReference(whenCallArguments)) {
+            return getFirstReference(whenCallArguments);
+        } else {
+            return null;
+        }
+    }
+
+    private PsiReferenceExpression getFirstReference(PsiExpression[] expressions) {
+        return (PsiReferenceExpression) expressions[0];
+    }
+
+    private boolean containsReference(PsiExpression[] expressions) {
+        return expressions.length > 0 && expressions[0] instanceof PsiReferenceExpression;
     }
 }

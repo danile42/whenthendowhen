@@ -26,33 +26,47 @@ import com.intellij.psi.PsiReferenceExpression;
  */
 public class WhenThenPredicate extends AbstractStatefulStubbingIntentionPredicate {
     @Override
-    public boolean satisfiedBy(PsiElement element) {
-        if ((element instanceof PsiMethodCallExpression)) {
-            PsiMethodCallExpression methodCall = (PsiMethodCallExpression) element;
-            PsiReferenceExpression methodReference = methodCall.getMethodExpression();
+    public void analyze(PsiElement element) {
+        if (isMethodCall(element)) {
+            analyzeMethodCall((PsiMethodCallExpression) element);
+        }
+    }
 
-            String methodName = methodReference.getReferenceName();
-            if ((methodName.startsWith("then"))) {
-                thenCall = methodCall;
-                if ((methodReference.getFirstChild() instanceof PsiMethodCallExpression)) {
-                    PsiMethodCallExpression subMethodCall = (PsiMethodCallExpression) methodReference.getFirstChild();
-                    String subMethodName = subMethodCall.getMethodExpression().getReferenceName();
-                    if ((subMethodName.equals("when"))) {
-                        whenCall = subMethodCall;
-                        PsiExpression[] whenCallArguments = whenCall.getArgumentList().getExpressions();
-                        if (whenCallArguments.length > 0 && whenCallArguments[0] instanceof PsiMethodCallExpression) {
-                            stubbedMethodCall = (PsiMethodCallExpression) whenCallArguments[0];
-                            stubbedMethodArguments = stubbedMethodCall.getArgumentList().getExpressions();
-                            PsiReferenceExpression stubbedMethodCallExpression = stubbedMethodCall.getMethodExpression();
-                            if (((stubbedMethodCallExpression.getFirstChild() instanceof PsiReferenceExpression))) {
-                                mockObject = (PsiReferenceExpression) stubbedMethodCallExpression.getFirstChild();
-                                return true;
-                            }
-                        }
-                    }
-                }
+    private void analyzeMethodCall(PsiMethodCallExpression methodCall) {
+        if ((getMethodName(methodCall).startsWith("then"))) {
+            thenCall = methodCall;
+            if (isMethodCall(methodCall.getMethodExpression().getFirstChild())) {
+                analyzeSubMethodCall((PsiMethodCallExpression) methodCall.getMethodExpression().getFirstChild());
             }
         }
-        return false;
+    }
+
+    private void analyzeSubMethodCall(PsiMethodCallExpression subMethodCall) {
+        if ((getMethodName(subMethodCall).equals("when"))) {
+            whenCall = subMethodCall;
+            PsiExpression[] whenCallArguments = getMethodArguments(whenCall);
+            if (containsMethodCall(whenCallArguments)) {
+                stubbedMethodCall = getFirstMethodCall(whenCallArguments);
+                stubbedMethodArguments = getMethodArguments(stubbedMethodCall);
+                mockObject = getMockObject(stubbedMethodCall);
+            }
+        }
+    }
+
+    private boolean containsMethodCall(PsiExpression[] methodCallArguments) {
+        return methodCallArguments.length > 0 && isMethodCall(methodCallArguments[0]);
+    }
+
+    private PsiMethodCallExpression getFirstMethodCall(PsiExpression[] methodCallArguments) {
+        return (PsiMethodCallExpression) methodCallArguments[0];
+    }
+
+    private PsiReferenceExpression getMockObject(PsiMethodCallExpression methodCall) {
+        PsiReferenceExpression methodExpression = methodCall.getMethodExpression();
+        if (((methodExpression.getFirstChild() instanceof PsiReferenceExpression))) {
+            return (PsiReferenceExpression) methodExpression.getFirstChild();
+        } else {
+            return null;
+        }
     }
 }

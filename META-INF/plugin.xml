@@ -1,40 +1,32 @@
 <idea-plugin version="2">
   <id>de.suljee.dw.whenthendowhen</id>
-  <name>when-then to do-when</name>
-  <version>0.0.2</version>
+  <name>JUnit, Mockito and Hamcrest refactorings</name>
+  <version>0.0.3</version>
   <vendor email="dw@suljee.de" url="http://www.suljee.de/~dw">suljee.de/~dw</vendor>
 
   <description><![CDATA[
-      Intention to convert Mockito "when-then" stubbing to "do-when" stubbing and vice versa.
+      Intentions to convert Mockito "when-then" stubbing to "do-when" stubbing and vice versa, and to convert JUnit 3
+      assertions to JUnit 4 assertions with Hamcrest matchers.
       ]]></description>
 
   <change-notes><![CDATA[
       <ul>
       <li>2014-01-22: Basic support for converting "when-then" to "do-when" and vice versa.</li>
       <li>2014-01-22: Fixed bug (old parse results used when applied to unfinished stubbing).</li>
+      <li>2014-03-18: Basic support for converting JUnit 3 assertions to JUnit 4 assertions with Hamcrest matchers.</li>
       </ul>
       ]]>
   </change-notes>
 
-  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="133.193"/>
 
-  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-       on how to target different products -->
-  <!-- uncomment to enable plugin in all products
-  <depends>com.intellij.modules.lang</depends>
-  -->
-
   <application-components>
-    <!-- Add your application components here -->
   </application-components>
 
   <project-components>
-    <!-- Add your project components here -->
   </project-components>
 
   <actions>
-    <!-- Add your actions here -->
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -45,6 +37,11 @@
       </intentionAction>
       <intentionAction>
           <className>de.suljee.dw.whenthendowhen.DoWhenToWhenThenStubbingIntention</className>
+          <bundleName>de.suljee.dw.whenthendowhen.whenthendowhen</bundleName>
+          <categoryKey>intention.category.junit</categoryKey>
+      </intentionAction>
+      <intentionAction>
+          <className>de.suljee.dw.junit3to4.Junit3AssertionToJunit4AndHamcrestIntention</className>
           <bundleName>de.suljee.dw.whenthendowhen.whenthendowhen</bundleName>
           <categoryKey>intention.category.junit</categoryKey>
       </intentionAction>

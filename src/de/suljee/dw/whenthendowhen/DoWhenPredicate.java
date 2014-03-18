@@ -21,12 +21,16 @@ import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiReferenceExpression;
 
+import static de.suljee.dw.whenthendowhen.PsiUtils.getMethodArguments;
+import static de.suljee.dw.whenthendowhen.PsiUtils.getMethodName;
+import static de.suljee.dw.whenthendowhen.PsiUtils.isMethodCall;
+
 /**
  * Determines whether the current element is a "do-when" stubbing.
  */
 public class DoWhenPredicate extends AbstractStatefulStubbingIntentionPredicate {
     @Override
-    void analyze(PsiElement element) {
+    protected void analyze(PsiElement element) {
         if (isMethodCall(element)) {
             analyzeMethodCall((PsiMethodCallExpression) element);
         }

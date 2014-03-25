@@ -21,6 +21,7 @@ import com.siyeh.ipp.base.Intention;
 import com.siyeh.ipp.base.PsiElementPredicate;
 import org.jetbrains.annotations.NotNull;
 
+import static com.siyeh.ig.PsiReplacementUtil.replaceExpression;
 import static de.suljee.dw.whenthendowhen.PsiUtils.joinExpressionTexts;
 
 /**
@@ -31,7 +32,7 @@ public class DoWhenToWhenThenStubbingIntention extends Intention {
 
     @Override
     protected void processIntention(@NotNull PsiElement element) {
-        replaceExpression(whenClause() + stubbedMethodCall() + thenClause(), PREDICATE.stubbedMethodCall);
+        replaceExpression(PREDICATE.stubbedMethodCall, whenClause() + stubbedMethodCall() + thenClause());
     }
 
     private String whenClause() {

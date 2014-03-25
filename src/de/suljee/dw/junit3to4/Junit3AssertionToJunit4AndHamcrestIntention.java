@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.siyeh.ig.PsiReplacementUtil.replaceExpression;
 import static de.suljee.dw.whenthendowhen.PsiUtils.getMethodName;
 import static de.suljee.dw.whenthendowhen.PsiUtils.joinExpressionTexts;
 
@@ -23,8 +24,7 @@ public class Junit3AssertionToJunit4AndHamcrestIntention extends Intention {
 
     @Override
     protected void processIntention(@NotNull PsiElement psiElement) {
-        replaceExpression("assertThat(" + matcherString() + ")",
-                PREDICATE.assertCall);
+        replaceExpression(PREDICATE.assertCall, "assertThat(" + matcherString() + ")");
     }
 
     private String matcherString() {
@@ -33,7 +33,7 @@ public class Junit3AssertionToJunit4AndHamcrestIntention extends Intention {
         int lastArgIndex = assertArgs.size() - 1;
 
         String messageString = null;
-        String actualString = getText(assertArgs, 1); // default value - may be replaced below
+        String actualString = getText(assertArgs, Math.min(assertArgs.size() - 1, 1)); // default value - may be replaced below
         String matcherMethod = "";
         String matchArguments = getText(assertArgs, 0);
         if (assertionType.equals("Equals")) {

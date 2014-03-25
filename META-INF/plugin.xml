@@ -11,6 +11,7 @@
 
   <change-notes><![CDATA[
       <ul>
+      <li>2014-03-25: Works with IDEA 13.1.1, should also work with previous 13.1.x versions.</li>
       <li>2014-03-25: Works only until IDEA 13.0.2 so far. IDEA 13.1 will be supported soon.</li>
       <li>2014-03-18: Basic support for converting JUnit 3 assertions to JUnit 4 assertions with Hamcrest matchers.</li>
       <li>2014-01-22: Fixed bug (old parse results used when applied to unfinished stubbing).</li>
@@ -19,7 +20,7 @@
       ]]>
   </change-notes>
 
-  <idea-version since-build="133.193" until-build="133.696"/>
+  <idea-version since-build="135.0" until-build="135.9999"/>
 
   <application-components>
   </application-components>

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>de.suljee.dw.whenthendowhen</id>
   <name>JUnit, Mockito and Hamcrest refactorings</name>
-  <version>0.0.4</version>
+  <version>0.0.5</version>
   <vendor email="dw@suljee.de" url="http://www.suljee.de/~dw">suljee.de/~dw</vendor>
 
   <description><![CDATA[
@@ -11,6 +11,7 @@
 
   <change-notes><![CDATA[
       <ul>
+      <li>2014-08-24: Version 0.0.5. Works with JRE 1.6.0_45.</li>
       <li>2014-03-25: Version 0.0.4. Works with IDEA 13.1.1, should also work with previous 13.1.x versions.</li>
       <li>2014-03-25: Works only until IDEA 13.0.2 so far. IDEA 13.1 will be supported soon.</li>
       <li>2014-03-18: Version 0.0.3. Basic support for converting JUnit 3 assertions to JUnit 4 assertions with Hamcrest matchers.</li>

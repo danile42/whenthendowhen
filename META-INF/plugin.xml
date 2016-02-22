@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>de.suljee.dw.whenthendowhen</id>
   <name>JUnit, Mockito and Hamcrest refactorings</name>
-  <version>0.0.6</version>
+  <version>0.0.7</version>
   <vendor email="dw@suljee.de" url="http://www.suljee.de/~dw">suljee.de/~dw</vendor>
 
   <description><![CDATA[
@@ -11,6 +11,7 @@
 
   <change-notes><![CDATA[
       <ul>
+      <li>2016-02-22: Version 0.0.7. Works with IDEA 15.0.3.</li>
       <li>2015-07-07: Version 0.0.6. Works with IDEA 14.1.4.</li>
       <li>2014-08-24: Version 0.0.5. Works with JRE 1.6.0_45.</li>
       <li>2014-03-25: Version 0.0.4. Works with IDEA 13.1.1, should also work with previous 13.1.x versions.</li>
@@ -22,7 +23,7 @@
       ]]>
   </change-notes>
 
-  <idea-version since-build="141.0" until-build="141.9999"/>
+  <idea-version since-build="143.0" until-build="143.9999"/>
 
   <application-components>
   </application-components>

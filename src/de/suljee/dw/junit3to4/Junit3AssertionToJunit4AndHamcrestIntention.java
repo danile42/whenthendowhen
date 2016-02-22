@@ -30,7 +30,6 @@ public class Junit3AssertionToJunit4AndHamcrestIntention extends Intention {
     private String matcherString() {
         String assertionType = StringUtils.removeStart(getMethodName(PREDICATE.assertCall), "assert");
         List<PsiExpression> assertArgs = Arrays.asList(PREDICATE.assertCallArguments);
-        int lastArgIndex = assertArgs.size() - 1;
 
         String messageString = null;
         String actualString = getText(assertArgs, Math.min(assertArgs.size() - 1, 1)); // default value - may be replaced below

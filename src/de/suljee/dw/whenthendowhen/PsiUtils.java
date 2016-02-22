@@ -19,31 +19,24 @@ package de.suljee.dw.whenthendowhen;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethodCallExpression;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class PsiUtils {
-    public static final Transformer EXPRESSION_TO_TEXT_TRANSFORMER = new Transformer() {
-        @Override
-        public Object transform(Object o) {
-            PsiExpression expression = (PsiExpression) o;
-            return expression.getText();
-        }
-    };
+import static org.apache.commons.collections4.CollectionUtils.collect;
+import static org.apache.commons.lang.StringUtils.*;
 
+public class PsiUtils {
     public static String joinExpressionTexts(PsiExpression[] psiExpressions, String separator) {
         return joinExpressionTexts(Arrays.asList(psiExpressions), separator);
     }
 
     public static String joinExpressionTexts(List<PsiExpression> psiExpressions, String separator) {
-        Collection<String> mockedMethodArgs = CollectionUtils.collect(psiExpressions,
-                                                                      EXPRESSION_TO_TEXT_TRANSFORMER);
-        return StringUtils.join(mockedMethodArgs, separator);
+        Collection<String> mockedMethodArgs = collect(psiExpressions, PsiExpression::getText);
+        return join(mockedMethodArgs, separator);
     }
 
     public static boolean isMethodCall(PsiElement element) {
